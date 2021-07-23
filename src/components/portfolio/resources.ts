@@ -49,7 +49,7 @@ export const useStockHistory = (portfolio: string) => {
 
   return {
     stockHistory: sortStockHistory(data?.historicalStockList),
-    isLoading: !error && !data,
+    isHistoryLoading: !error && !data,
     isError: error
   }
 }
@@ -59,7 +59,7 @@ export const useStockCurrentPrice = (portfolio: string) => {
 
   return {
     currentStockPrice: sortCurrentStockData(data),
-    isLoading: !error && !data,
+    isCurrentPriceLoading: !error && !data,
     isError: error
   }
 }
