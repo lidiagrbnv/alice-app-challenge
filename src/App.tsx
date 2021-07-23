@@ -2,6 +2,7 @@ import React, { createContext, useState } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import { UserFrom } from './components/userForm'
+import { Portfolio } from './components/portfolio'
 
 export const AppContext = createContext(null as any)
 
@@ -14,7 +15,9 @@ const App = () => {
       <CssBaseline />
       <Container maxWidth="sm">
         <AppContext.Provider value={value}>
-          <UserFrom />
+          {
+            !context ? <UserFrom /> : <Portfolio />
+          }
         </AppContext.Provider>
       </Container>
     </React.Fragment>
