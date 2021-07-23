@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { AppContext } from '../../App'
 
 import portfolios from './portfolios.json'
-import { useStockHistory } from './resources'
+import { useStockHistory, useStockCurrentPrice } from './resources'
 
 const useStyles = makeStyles(() => ({
   form: {
@@ -21,23 +21,31 @@ const Portfolio = () => {
   const stockNames = portfolioWeights.map((stock: any) => stock.ticker).join(',')
   const monthlyContribution  = Number(context.income) * 0.15
 
-  console.log(monthlyContribution)
-
   const investmentPortfolio = portfolioWeights.reduce((acc: any, cur: any) => ({...acc, [cur.ticker]: Number(cur.weight) * monthlyContribution}), {})
 
-  console.log(investmentPortfolio)
-
   const { stockHistory, isLoading, isError } = useStockHistory(stockNames)
+  const { currentStockPrice } = useStockCurrentPrice(stockNames)
 
-  console.log(stockHistory)
+  const calculateFinalStockNumber = stockHistory && Object.keys(stockHistory).reduce((acc: any, curr: any) => {
+    const summ = stockHistory[curr].reduce((res: any, stock: any) => {
+      const sharesPerMonth = +(investmentPortfolio[curr] / Number(stock.close)).toFixed(2)
 
-  const calculateFinalStockNumber = Object.keys(stockHistory).map((item) => (
-    stockHistory[item].reduce((acc: any, curr: any) => {
-      const shares = +(investmentPortfolio[item] / Number(curr.close)).toFixed(2)
+      console.log(sharesPerMonth)
 
-      console.log(shares)
-    }, {})
-  ))
+      return res + sharesPerMonth
+    }, 0)
+
+    return ({
+      ...acc,
+      [curr]: summ,
+    })
+  }, {})
+
+  const currentBudget = Object.keys(calculateFinalStockNumber).map((item: any) => ({
+    [item]: calculateFinalStockNumber[item] * currentStockPrice[item]
+  }))
+
+  console.log(currentBudget)
 
   return (
     <h1>Hello</h1>

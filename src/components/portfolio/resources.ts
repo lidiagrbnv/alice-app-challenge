@@ -33,6 +33,14 @@ const sortStockHistory = (stockList: any) => {
   )
 }
 
+const sortCurrentStockData = (stockList: any) => {
+  if (!stockList) return
+
+  console.log(stockList)
+
+  return stockList.reduce((acc: any, stock: any) => ({ ...acc, [stock.symbol]: stock.price }), {})
+}
+
 //@ts-ignore
 const fetcher = (...args: any) => fetch(...args).then(res => res.json())
 
@@ -41,6 +49,16 @@ export const useStockHistory = (portfolio: string) => {
 
   return {
     stockHistory: sortStockHistory(data?.historicalStockList),
+    isLoading: !error && !data,
+    isError: error
+  }
+}
+
+export const useStockCurrentPrice = (portfolio: string) => {
+  const { data, error } = useSWR(`${URL}/profile/${portfolio}?${new URLSearchParams({ apikey: APIKey })}`, fetcher)
+
+  return {
+    currentStockPrice: sortCurrentStockData(data),
     isLoading: !error && !data,
     isError: error
   }
